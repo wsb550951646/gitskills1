@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+ 		
+ 			<!--配置Spring配置文件   核心为配置数据源 、扫苗包下注解、 Spring与Mybatis整合 、事务管理  -->
+ 			
+ 			
+<!-- ==============================扫描包下组件=============================================== -->
+	<context:component-scan base-package="com.ssm.crud">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+<!-- =========================================================================== -->	
+	
+
+<!--===============================数据源的配置============================================== -->
+
+	<context:property-placeholder location="classpath:db.properties"/>
+	<!-- 配置C3p0数据源 -->
+	<bean id="comboPooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"/>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+		<property name="user" value="${jdbc.user}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	<!--=================================================================== -->
+	
+	
+	<!--==========================Mybatis配置============================================== -->
+	
+	<!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="comboPooledDataSource"/>
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<!-- 指定Mpper配置文件的存放位置 -->
+		<property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+	</bean>
+	
+	<!--扫描所有的Mybatis中的接口的实现加入到IOC容器控制中  -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<property name="basePackage" value="com.ssm.crud.dao"></property>
+	</bean>
+	
+	<!--================================================================= -->
+	
+	
+	<!--=============================事务控制================================ -->
+	<!-- 配置事务管理 -->
+	<bean id="TransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<!-- 控制住数据源 -->
+	<property name="dataSource" ref="comboPooledDataSource"/>
+	</bean>
+	
+	<!-- 开启基于注解的事务 -->
+	<tx:annotation-driven transaction-manager="TransactionManager" proxy-target-class="true"/>
+	
+
+	<!--================================================================== -->
+	
+</beans>

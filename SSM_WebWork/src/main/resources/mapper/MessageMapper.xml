@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//ENKey type" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.ssm.crud.dao.MessageDao">
+
+	<sql id="message">
+		id, ps_id, cp_id, time, ps_name as psName, ps_money as psMoney, cp_name as cpName, cp_address as cpAddress
+	</sql>
+
+	<resultMap type="message" id="messageMapper" >
+		<id column="id" property="id"/>
+		<result column="time" property="time"/>
+		<result column="ps_name" property="psName"/>
+		<result column="ps_money" property="psMoney"/>
+		<result column="cp_name" property="cpName"/>
+		<result column="cp_address" property="cpAddress"/>
+		<association property="position" column="ps_id" select="com.ssm.crud.dao.PositionDao.getPositionById"></association>
+		<association property="company" column="cp_id" select="com.ssm.crud.dao.CompanyDao.getCompanyById"></association>
+	</resultMap>
+	
+	<select id="getAll" resultMap="messageMapper">
+	
+		select 
+		<include refid="message"/>
+		 from t_message
+		
+	</select>
+	
+	<select id="getMessageByMessage" resultMap="messageMapper">
+		select
+		<include refid="message"/>
+		from t_message
+		<where>
+		<if test="psName !=null and psName.trim()!=&quot;&quot;">
+		ps_name like #{psName}
+		</if>
+		<if test="psMoney !=null and psMoney.trim()!=&quot;&quot;">
+		and ps_money like #{psMoney}
+		</if>
+		<if test="cpName !=null and cpName.trim()!=&quot;&quot;">
+		and cp_name like #{cpName}
+		</if>
+		<if test="cpAddress !=null and cpAddress.trim()!=&quot;&quot;">
+		and cp_address like #{cpAddress}
+		</if>
+		<if test="time !=null and time.trim()!=&quot;&quot;">
+		and time like #{time}
+		</if>
+		</where>
+	</select>
+	
+	<select id="getMessageById" resultMap="messageMapper">
+		select 
+		<include refid="message"/>
+		from t_message
+		where id = #{id}
+	</select>
+	
+	
+	
+	<!-- 按照类插入 -->
+	<insert id="insertByMessage" parameterType="message">
+		 insert into t_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="position.id!= null">
+        ps_id,
+      </if>
+      <if test="company.id!= null">
+        cp_id,
+      </if>
+      <if test="time!= null">
+        time,
+      </if>
+       <if test="psName!= null">
+        ps_name,
+      </if>
+       <if test="psMoney!= null">
+        ps_money,
+      </if>
+       <if test="cpName!= null">
+        cp_name,
+      </if>
+       <if test="cpAddress!= null">
+        cp_address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="position.id!= null">
+        #{position.id,jdbcType=INTEGER},
+      </if>
+      <if test="company.id!= null">
+        #{company.id,jdbcType=INTEGER},
+      </if>
+       <if test="time!= null">
+        #{time,jdbcType=VARCHAR},
+      </if>
+      <if test="psName!= null">
+        #{psName,jdbcType=VARCHAR},
+      </if>
+       <if test="psMoney!= null">
+        #{psMoney,jdbcType=VARCHAR},
+      </if>
+       <if test="cpName!= null">
+        #{cpName,jdbcType=VARCHAR},
+      </if>
+       <if test="cpAddress!= null">
+        #{cpAddress,jdbcType=VARCHAR},
+      </if>
+    </trim>
+	</insert>
+	
+
+
+
+	<!-- 按照类更新更新 -->
+	<update id="updateByMessage" parameterType="message">
+	  update t_message
+    <set>
+      <if test="position.id!= null">
+        ps_id = #{position.id,jdbcType=INTEGER},
+      </if>
+       <if test="company.id!=null">
+        cp_id = #{company.id,jdbcType=INTEGER},
+      </if>
+      <if test="psName!=null">
+       ps_name = #{psName,jdbcType=VARCHAR},
+      </if>
+        <if test="psMoney!=null">
+       ps_money = #{psMoney,jdbcType=VARCHAR},
+      </if>
+        <if test="cpName!=null">
+       cp_name = #{cpName,jdbcType=VARCHAR},
+      </if>
+        <if test="cpAddress!=null">
+       cp_address = #{cpAddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id = #{id} 
+	</update>
+	
+	<!--删除  -->
+	<delete id="deleteById" parameterType="INTEGER">
+		 delete from t_message
+    where id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 删除所有 -->
+	<delete id="deleteAll">
+		TRUNCATE TABLE t_message
+	</delete>
+	
+
+
+</mapper>

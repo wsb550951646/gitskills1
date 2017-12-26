@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//ENKey type" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.ssm.crud.dao.CompanyDao">
+
+	<sql id="company">
+		id, address, cp_info as cpInfo, cp_url as cpUrl, cp_name as cpName
+	</sql>
+
+	<resultMap type="company" id="selectAllResult" >
+		<id column="id" property="id"/>
+		<result column="address" property="address"/>
+		<result column="cp_info" property="cpInfo"/>
+		<result column="cp_url" property="cpUrl"/>
+		<result column="cp_name" property="cpName"/>
+		
+	</resultMap>
+	
+	<select id="getCompanyOneByName" parameterType="String" resultMap="selectAllResult">
+		select
+		<include refid="company"></include>
+		from t_company
+		where cp_name = #{cpName} 
+		limit 0,1  
+	</select>
+	
+	<select id="getAll" resultMap="selectAllResult">
+	
+		select 
+		<include refid="company"/>
+		 from t_company
+		
+	</select>
+	
+	<select id="getCompanyById" resultType="company">
+		select 
+		<include refid="company"/>
+		from t_company
+		where id = #{id}
+	</select>
+	
+	<!-- 按照类插入 -->
+	<insert id="insertByCompany" parameterType="company">
+		 insert into t_company
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="address!= null">
+        address,
+      </if>
+      <if test="cpInfo!= null">
+        cp_info,
+      </if>
+      <if test="cpUrl != null">
+        cp_url,
+      </if>
+      <if test="cpName != null">
+        cp_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="address!= null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="cpInfo != null">
+        #{cpInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="cpUrl != null">
+        #{cpUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="cpName != null">
+        #{cpName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+	</insert>
+
+
+	<!-- 按照类更新更新 -->
+	<update id="updateByCompany" parameterType="company">
+	  update t_company
+    <set>
+      <if test="address!= null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+       <if test="cpInfo!=null">
+        cp_info = #{cpInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="cpUrl!=null">
+        cp_url = #{cpUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="cpName!=null">
+        cp_name = #{cpName,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id = #{id} 
+	</update>
+	
+	<!--删除  -->
+	<delete id="deleteById" parameterType="Integer">
+		 delete from t_company
+    where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<!--删除所有  -->
+	<delete id="deleteAll">
+		TRUNCATE TABLE t_company
+	</delete>
+
+
+</mapper>

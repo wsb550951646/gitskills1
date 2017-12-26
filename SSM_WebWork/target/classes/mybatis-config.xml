@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//ENKey type" 
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+<configuration>
+		
+<!-- 使用setting配置底层数据  注意要按照configuration的顺序填写 -->
+	<settings>
+	<setting name="lazyLoadingEnabled" value="true"/>
+	<setting name="aggressiveLazyLoading" value="true"/>
+	<setting name="cacheEnabled"  value="true"/>	
+	</settings>
+
+<!-- 别名 -->
+	<typeAliases>
+		<package name="com.ssm.crud.bean"/>
+		<!--
+		1.精确到包下的类去设计别名
+		2.扫描包，将包下的类的第一个字母换成小写去当做别名
+		3.使用注解的方法@Alias（"role"）放在类上当做别名
+		注意：别名不区分大小写
+		
+		1.<typeAlias alias="role" type="com.mybatis.entity.Role" />
+		 
+		2.<package name="com.mybatis.entity"/>
+		  -->
+	</typeAliases>
+	
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+	</plugins>
+	
+</configuration>

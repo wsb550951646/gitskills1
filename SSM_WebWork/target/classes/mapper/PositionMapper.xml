@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//ENKey type" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.ssm.crud.dao.PositionDao">
+
+	<sql id="position">
+		id, ps_name as psName, money, ps_url as psUrl, required
+	</sql>
+
+	<resultMap type="position" id="selectAllResult" >
+		<id column="id" property="id"/>
+		<result column="ps_name" property="paName"/>
+		<result column="money" property="money"/>
+		<result column="ps_url" property="psUrl"/>
+	</resultMap>
+	
+	
+	
+	
+	<select id="getAll" resultMap="selectAllResult">
+	
+		select 
+		<include refid="position"/>
+		 from t_position
+		
+	</select>
+	
+	<!-- 返回的是List<String>类型 则resultType返回的是String -->
+	<select id="getAllPositionRequried" resultType="String">
+		select required from t_position
+	</select>
+	
+	<select id="getPositionById" resultType="position">
+		select 
+		<include refid="position"/>
+		from t_position
+		where id = #{id}
+	</select>
+	
+	<!-- 按照类插入 -->
+	<insert id="insertByPosition" parameterType="position">
+		 insert into t_position
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="psName!= null">
+        ps_name,
+      </if>
+      <if test="money!= null">
+        money,
+      </if>
+      <if test="required!= null">
+        required,
+      </if>
+       <if test="psUrl!= null">
+        ps_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="psName!= null">
+        #{psName,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="required!= null">
+        #{required,jdbcType=VARCHAR},
+      </if>
+       <if test="psUrl!= null">
+        #{psUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+	</insert>
+
+	<insert id="insertPositionGetId" parameterType="position" useGeneratedKeys="true" keyProperty="id">
+		insert into t_position(ps_name,ps_url,required,money)
+		value (#{psName},#{psUrl},#{required},#{money})
+	</insert>
+
+	
+
+	<!-- 按照类更新更新 -->
+	<update id="updateByPosition" parameterType="position">
+	  update t_position
+    <set>
+      <if test="psName!= null">
+        ps_name = #{psName,jdbcType=VARCHAR},
+      </if>
+       <if test="money!=null">
+        money = #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="required!=null">
+       required = #{required,jdbcType=VARCHAR},
+      </if>
+      <if test="psUrl!=null">
+       ps_url = #{psUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+      where id = #{id} 
+	</update>
+	
+	<!--删除  -->
+	<delete id="deleteById" parameterType="Integer">
+		 delete from t_position
+    where id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<!-- 删除所有 -->
+	<delete id="deleteAll">
+		TRUNCATE TABLE t_position
+	</delete>
+
+
+</mapper>
